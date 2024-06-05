@@ -19,6 +19,7 @@
     "react-dom": "^19.0.0-rc-bf3a29d097-20240603",
     "react-hook-form": "^7.51.5",
     "react-i18next": "^14.1.2",
+    "react-toastify": "^10.0.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
