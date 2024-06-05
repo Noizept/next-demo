@@ -20,7 +20,20 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {children}
-        <ToastContainer />
+
+        <ToastContainer
+          className="toast-position"
+          position="bottom-right"
+          autoClose={10000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </body>
     </html>
   );

@@ -1,17 +1,19 @@
 'use client';
 import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { registerSchema } from './registerValitors';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { zodResolver } from '@hookform/resolvers/zod';
 
+import { registerSchema } from './registerValitors';
 import { onSubmitAction } from './registerActions';
 
 type FormValues = z.infer<typeof registerSchema>;
 
 export default function SignupForm() {
-  const [state, formAction, isPending] = React.useActionState(onSubmitAction, false);
+  const [state, formAction, isPending] = React.useActionState(onSubmitAction, {
+    status: 'DEFAULT',
+  });
 
   const {
     control,
@@ -19,6 +21,7 @@ export default function SignupForm() {
     formState: { errors, isDirty, isValid },
     handleSubmit,
   } = useForm<FormValues>({
+    mode: 'all',
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: '',
@@ -27,10 +30,9 @@ export default function SignupForm() {
     },
   });
 
-  console.log(errors);
   React.useEffect(() => {
-    if (state) toast.success('success');
-    // else toast.error('error');
+    if (state.status === 'SUCCESS') toast.success(`success user: ${state.userId}`);
+    if (state.status === 'FAILURE') toast.error('FAILURE');
   }, [state]);
 
   const [isClient, setIsClient] = React.useState(false);
@@ -43,13 +45,11 @@ export default function SignupForm() {
   }
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log('Form Data Submitted:', data); // Log submitted data
-
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value !== null ? String(value) : '');
-    });
-    formAction(formData);
+    // const formData = new FormData();
+    // Object.entries(data).forEach(([key, value]) => {
+    //   formData.append(key, value !== null ? String(value) : '');
+    // });
+    formAction(data);
   };
 
   return (
@@ -117,7 +117,26 @@ export default function SignupForm() {
               </>
             )}
           />
-
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <>
+                <label htmlFor="confirmPassword">Password:</label>
+                <input
+                  placeholder="Confirm Password"
+                  {...field}
+                  {...register('confirmPassword')}
+                  id={'confirmPassword'}
+                  value={field.value ?? ''}
+                  type="password"
+                />
+                {errors.confirmPassword && (
+                  <span className="error-message">{errors.confirmPassword.message}</span>
+                )}
+              </>
+            )}
+          />
           <button
             type="submit"
             className="submit-button"
