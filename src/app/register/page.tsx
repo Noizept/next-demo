@@ -1,5 +1,10 @@
 import React from "react";
+import Signup from "./SignupForm";
 
 export default function Register() {
-  return <div>Register</div>;
+  return (
+    <div>
+      <Signup />
+    </div>
+  );
 }
