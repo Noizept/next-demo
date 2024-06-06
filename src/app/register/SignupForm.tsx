@@ -54,10 +54,6 @@ export default function SignupForm() {
   }
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    // const formData = new FormData();
-    // Object.entries(data).forEach(([key, value]) => {
-    //   formData.append(key, value !== null ? String(value) : '');
-    // });
     formAction(data);
   };
 
