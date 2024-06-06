@@ -1,6 +1,7 @@
 import React from 'react';
 import Signup from './SignupForm';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Register',
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function Register() {
+  // redirect(`/`);
+
   return (
     <div>
       <Signup />

@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +13,8 @@ import { onSubmitAction } from './registerActions';
 type FormValues = z.infer<typeof registerSchema>;
 
 export default function SignupForm() {
+  const router = useRouter(); // Get the router instance
+
   const [state, formAction, isPending] = React.useActionState(onSubmitAction, {
     status: 'DEFAULT',
   });
@@ -20,6 +24,7 @@ export default function SignupForm() {
     register,
     formState: { errors, isDirty, isValid },
     handleSubmit,
+    watch,
   } = useForm<FormValues>({
     mode: 'all',
     resolver: zodResolver(registerSchema),
@@ -29,11 +34,15 @@ export default function SignupForm() {
       password: '',
     },
   });
+  const email = watch('email');
 
   React.useEffect(() => {
-    if (state.status === 'SUCCESS') toast.success(`success user: ${state.userId}`);
+    if (state.status === 'SUCCESS' && router) {
+      toast.success(`success user: ${state.userId} email sent to: ${email}`);
+      router.push('/dick');
+    }
     if (state.status === 'FAILURE') toast.error('FAILURE');
-  }, [state]);
+  }, [state, router, email]);
 
   const [isClient, setIsClient] = React.useState(false);
   React.useEffect(() => {
@@ -54,14 +63,14 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div style={{ maxWidth: '600px' }}>
-        <h1>Register</h1>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      <div className="flex flex-col max-w-screen-md justify-center">
+        <h1 className="pb-10">Register</h1>
+        <div>
           <Controller
             name="name"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="flex w-full flex-col pb-5">
                 <label htmlFor="name">Name:</label>
                 <input
                   placeholder="name"
@@ -73,14 +82,15 @@ export default function SignupForm() {
                 {errors.name && (
                   <span className="error-message">{errors.name.message}</span>
                 )}
-              </>
+              </div>
             )}
           />
           <Controller
             name="email"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="flex w-full flex-col  pb-5">
+                {' '}
                 <label htmlFor="email">Email:</label>
                 <input
                   placeholder="email"
@@ -93,7 +103,7 @@ export default function SignupForm() {
                 {errors.email && (
                   <span className="error-message">{errors.email.message}</span>
                 )}
-              </>
+              </div>
             )}
           />
 
@@ -101,7 +111,8 @@ export default function SignupForm() {
             name="password"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="flex w-full flex-col  pb-5">
+                {' '}
                 <label htmlFor="password">Password:</label>
                 <input
                   placeholder="password"
@@ -114,14 +125,14 @@ export default function SignupForm() {
                 {errors.password && (
                   <span className="error-message">{errors.password.message}</span>
                 )}
-              </>
+              </div>
             )}
           />
           <Controller
             name="confirmPassword"
             control={control}
             render={({ field }) => (
-              <>
+              <div className="flex w-full flex-col  pb-5">
                 <label htmlFor="confirmPassword">Password:</label>
                 <input
                   placeholder="Confirm Password"
@@ -130,20 +141,23 @@ export default function SignupForm() {
                   id={'confirmPassword'}
                   value={field.value ?? ''}
                   type="password"
+                  autoComplete="off"
                 />
                 {errors.confirmPassword && (
                   <span className="error-message">{errors.confirmPassword.message}</span>
                 )}
-              </>
+              </div>
             )}
           />
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={!isDirty || !isValid || isPending} // here
-          >
-            Submit
-          </button>
+          <div className="flex w-full flex-col  pb-5">
+            <button
+              type="submit"
+              className="flex bg-sky-500 hover:bg-sky-700 w-full disabled:opacity-50 justify-center"
+              disabled={!isDirty || !isValid || isPending} // here
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </form>

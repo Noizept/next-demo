@@ -8,7 +8,7 @@ import { registerSchema } from './registerValitors';
 const SALT_ROUNDS = 10;
 
 export const onSubmitAction = async (
-  state: any,
+  state: { status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: number },
   payload: z.infer<typeof registerSchema>,
 ): Promise<{ status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: number }> => {
   try {
