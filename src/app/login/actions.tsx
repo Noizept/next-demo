@@ -42,6 +42,7 @@ export const onSubmitAction = async (
     redirect('/');
     return { status: 'SUCCESS' };
   } catch (error: any) {
+    console.error(error);
     console.error('Validation error', error.message as string);
     return { status: 'FAILURE', error: error.message as string };
   }
