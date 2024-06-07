@@ -38,13 +38,8 @@ export const onSubmitAction = async (
   })
     .setExpirationTime(process.env.JWT_EXPIRES_IN!)
     .setProtectedHeader({ alg: 'HS256' });
-  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
-  await postgres.token.create({
-    data: {
-      token,
-    },
-  });
+  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
   cookies().set('next_demo_cookie', token, { httpOnly: true });
   redirect('/');

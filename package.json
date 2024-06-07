@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.5.0",
     "@prisma/client": "^5.15.0",
     "i18next": "^23.11.5",
+    "ioredis": "^5.4.1",
     "jose": "^5.4.0",
     "next": "^15.0.0-rc.0",
     "next-i18next": "^15.3.0",
