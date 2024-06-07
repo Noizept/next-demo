@@ -2,6 +2,7 @@
 import { loginSchema } from './loginSchema';
 import bcrypt from 'bcrypt';
 import postgres from '@/databases/postgres';
+// import redis from '@/databases/redis';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -41,6 +42,9 @@ export const onSubmitAction = async (
 
   const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
+
+  //! usefull for blacklist tokens. so we dont need keep session data for token revoke
+  // await redis.setex('REVOKED_TOKENS', 7776000, token);
   cookies().set('next_demo_cookie', token, { httpOnly: true });
   redirect('/');
   // } catch (error: any) {
