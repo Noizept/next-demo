@@ -3,13 +3,14 @@ import { loginSchema } from './loginSchema';
 import bcrypt from 'bcrypt';
 import postgres from '@/databases/postgres';
 import { z } from 'zod';
-import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { SignJWT } from 'jose';
 
 //!NOTE: redirect(/) works as throwing an exception under the hood
 //! when using the try catch, the catch will not allow the error to propagate
 //! therefore the redirect won't work
+
 export const onSubmitAction = async (
   state: { status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; error?: string },
   payload: z.infer<typeof loginSchema>,
@@ -30,12 +31,14 @@ export const onSubmitAction = async (
   if (!isValidPassword)
     return { ...state, status: 'FAILURE', error: 'Invalid credentials' };
 
-  const token = jwt.sign(
-    { id: user.id, email: user.email, name: user.name },
-    //@ts-ignore
-    process.env.DATABASE_URL,
-    { expiresIn: process.env.JWT_EXPIRES_IN },
-  );
+  const jwtCreate = new SignJWT({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  })
+    .setExpirationTime(process.env.JWT_EXPIRES_IN!)
+    .setProtectedHeader({ alg: 'HS256' });
+  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
   await postgres.token.create({
     data: {
