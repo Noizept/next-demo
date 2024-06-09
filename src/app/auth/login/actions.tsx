@@ -1,5 +1,5 @@
 'use server';
-import { loginSchema } from './loginSchema';
+import { loginSchema } from '@/schemas/authSchemas';
 import bcrypt from 'bcrypt';
 import postgres from '@/databases/postgres';
 // import redis from '@/databases/redis';
@@ -28,7 +28,7 @@ export const onSubmitAction = async (
   });
 
   if (!user) return { ...state, status: 'FAILURE', error: 'Invalid credentials' };
-  const isValidPassword = await bcrypt.compare(payload.password, user.password);
+  const isValidPassword = await bcrypt.compare(payload.password, user.password!);
   if (!isValidPassword)
     return { ...state, status: 'FAILURE', error: 'Invalid credentials' };
 
@@ -40,8 +40,7 @@ export const onSubmitAction = async (
     .setExpirationTime(process.env.JWT_EXPIRES_IN!)
     .setProtectedHeader({ alg: 'HS256' });
 
-  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
-
+  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.AUTH_SECRET!));
 
   //! usefull for blacklist tokens. so we dont need keep session data for token revoke
   // await redis.setex('REVOKED_TOKENS', 7776000, token);

@@ -10,9 +10,9 @@ import { registerSchema, loginSchema } from '@/schemas/authSchemas';
 const SALT_ROUNDS = 10;
 
 export const onRegister = async (
-  state: { status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: number },
+  state: { status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: string },
   payload: z.infer<typeof registerSchema>,
-): Promise<{ status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: number }> => {
+): Promise<{ status: 'SUCCESS' | 'DEFAULT' | 'FAILURE'; userId?: string }> => {
   const { error } = registerSchema.safeParse(payload);
   if (error) return { status: 'FAILURE' };
 
@@ -43,7 +43,7 @@ export const onSubmitAction = async (
   });
 
   if (!user) return { ...state, status: 'FAILURE', error: 'Invalid credentials' };
-  const isValidPassword = await bcrypt.compare(payload.password, user.password);
+  const isValidPassword = await bcrypt.compare(payload.password, user.password!);
   if (!isValidPassword)
     return { ...state, status: 'FAILURE', error: 'Invalid credentials' };
 
@@ -55,7 +55,7 @@ export const onSubmitAction = async (
     .setExpirationTime(process.env.JWT_EXPIRES_IN!)
     .setProtectedHeader({ alg: 'HS256' });
 
-  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
+  const token = await jwtCreate.sign(new TextEncoder().encode(process.env.AUTH_SECRET!));
 
   //! usefull for blacklist tokens. so we dont need keep session data for token revoke
   // await redis.setex('REVOKED_TOKENS', 7776000, token);

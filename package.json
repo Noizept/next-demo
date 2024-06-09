@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.2.0",
     "@hookform/resolvers": "^3.5.0",
     "@prisma/client": "^5.15.0",
     "i18next": "^23.11.5",
     "ioredis": "^5.4.1",
     "jose": "^5.4.0",
     "next": "^15.0.0-rc.0",
+    "next-auth": "^5.0.0-beta.19",
     "next-i18next": "^15.3.0",
     "next-intl": "^3.14.1",
     "postcss": "^8.4.38",
