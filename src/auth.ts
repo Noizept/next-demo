@@ -1,6 +1,8 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
 import postgres from '@/databases/postgres';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+
+import CredentialsProvider from '@/auth-providers/CredentialsProvider';
 declare module 'next-auth' {
   /**
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -21,9 +23,15 @@ declare module 'next-auth' {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(postgres),
-  providers: [],
-  session: { strategy: 'jwt' },
+  providers: [CredentialsProvider],
+  session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 30 },
+  callbacks: {},
+  // useSecureCookies: true,
+  pages: {
+    signIn: '/auth/register',
+    signOut: '/auth/logout',
+    error: '/auth/error', // Error code passed in query string as ?error=
+    verifyRequest: '/auth/verify-request', // (used for check email message)
+    // newUser: '/auth/new-user', // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
 });
-function PrismaAdapter(prisma: any): import('@auth/core/adapters').Adapter | undefined {
-  throw new Error('Function not implemented.');
-}

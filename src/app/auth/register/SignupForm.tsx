@@ -39,7 +39,7 @@ export default function SignupForm() {
   React.useEffect(() => {
     if (state.status === 'SUCCESS' && router) {
       toast.success(`success user: ${state.userId} email sent to: ${email}`);
-      router.push('/login');
+      router.push('/auth/login');
     }
     if (state.status === 'FAILURE') toast.error('FAILURE');
   }, [state, router, email]);
